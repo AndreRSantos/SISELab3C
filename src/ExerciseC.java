@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+
 //producer consumer test
+
 public class ExerciseC {
     private final static int MaxTasks = 10;
     private final static int Limit = 1;
@@ -8,31 +10,26 @@ public class ExerciseC {
         private ArrayList<Integer> contents = new ArrayList<Integer>();
         private int pos = -1;
 
-        public int get() {
-            if (contents.isEmpty()) {
-                throw new RuntimeException("The event queue is empty!");
+        public synchronized int get() throws InterruptedException {
+            while (contents.isEmpty()) {
+                //throw new RuntimeException("The event queue is empty!");
+                wait();
             }
             int value = contents.remove(pos);
             pos--;
+            notifyAll();
             return value;
         }
 
-        public void put(int value) {
-            if (contents.size() >= Limit) {
-                throw new RuntimeException("The event queue is full!");
+        public synchronized void put(int value) throws InterruptedException {
+            while (contents.size() >= Limit) {
+                wait();
             }
             contents.add(value);
             pos++;
+            notifyAll();
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
     
     static class Consumer extends Thread {
         private TaskList tasks;
@@ -45,7 +42,10 @@ public class ExerciseC {
         public void run() {
             int value = 0;
             for (int i = 0; i < MaxTasks; i++) {
-                value = tasks.get();
+                try {
+                    value = tasks.get();
+                } catch (InterruptedException e) {
+                }
                 System.out.println("Consumer #" + this.number + " got: " + value);
             }
         }
@@ -61,7 +61,10 @@ public class ExerciseC {
         }
         public void run() {
             for (int i = 0; i < MaxTasks; i++) {
-                tasknumber.put(i);
+                try {
+                    tasknumber.put(i);
+                } catch (InterruptedException e) {
+                }
                 System.out.println("Producer #" + this.number + " put: " + i);
                 try {
                     sleep((int)(Math.random() * 100));
