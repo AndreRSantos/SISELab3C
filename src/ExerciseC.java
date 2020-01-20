@@ -44,7 +44,7 @@ public class ExerciseC {
             for (int i = 0; i < MaxTasks; i++) {
                 try {
                     value = tasks.get();
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                 }
                 System.out.println("Consumer #" + this.number + " got: " + value);
             }
@@ -63,12 +63,12 @@ public class ExerciseC {
             for (int i = 0; i < MaxTasks; i++) {
                 try {
                     tasknumber.put(i);
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                 }
                 System.out.println("Producer #" + this.number + " put: " + i);
                 try {
                     sleep((int)(Math.random() * 100));
-                } catch (InterruptedException e) { }
+                } catch (Exception e) { }
             }
         }
     }
